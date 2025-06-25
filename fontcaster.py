@@ -61,8 +61,10 @@ def main():
     parser.add_argument("text", help="Text to render")
     parser.add_argument("--font-size", type=float, default=36.0, help="Font size in points")
     parser.add_argument("-o", "--output", default="output.png", help="Output PNG file name")
-    parser.add_argument("--text-color", default="#000000", help="Text color in hex format (e.g., #000000)")
-    parser.add_argument("--bg-color", default="#FFFFFF", help="Background color in hex format (e.g., #FFFFFF)")
+    parser.add_argument("--text-color", default="#000000",
+                        help="Text color in hex format (e.g., #000000)")
+    parser.add_argument("--bg-color", default="#FFFFFF",
+                        help="Background color in hex format (e.g., #FFFFFF)")
     args = parser.parse_args()
     try:
         text_color = hex_to_rgb(args.text_color)
