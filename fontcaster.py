@@ -10,6 +10,7 @@ gi.require_version("PangoCairo", "1.0")
 from gi.repository import Pango, PangoCairo
 
 WEIGHTS = [100, 200, 300, 400, 500, 600, 700, 800, 900]
+WEIGHT_NAMES = ["Thin", "Extra Light", "Light", "Regular", "Medium", "Semi Bold", "Bold", "Extra Bold", "Black"]
 
 
 def hex_to_rgb(hex_color):
@@ -28,11 +29,14 @@ def render_variants_to_png(font_family, text, font_size, output_file, text_color
     surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, 0, height_needed)
     ctx = cairo.Context(surface)
     layout = PangoCairo.create_layout(ctx)
-    for weight in WEIGHTS:
+    for index, weight in enumerate(WEIGHTS):
         desc = Pango.FontDescription(f"{font_family} {int(font_size)}")
         desc.set_weight(weight)
         layout.set_font_description(desc)
-        layout.set_text(text, -1)
+        if text:
+            layout.set_text(text, -1)
+        else:
+            layout.set_text(WEIGHT_NAMES[index], -1)
         ink_rect, logical_rect = layout.get_pixel_extents()
         max_text_width = max(max_text_width, logical_rect.width)
     width = max_text_width + padding * 2
@@ -46,7 +50,10 @@ def render_variants_to_png(font_family, text, font_size, output_file, text_color
         desc = Pango.FontDescription(f"{font_family} {int(font_size)}")
         desc.set_weight(weight)
         layout.set_font_description(desc)
-        layout.set_text(text, -1)
+        if text:
+            layout.set_text(text, -1)
+        else:
+            layout.set_text(WEIGHT_NAMES[index], -1)
         x = padding
         y = padding + index * line_spacing
         ctx.move_to(x, y)
@@ -58,7 +65,7 @@ def render_variants_to_png(font_family, text, font_size, output_file, text_color
 def main():
     parser = argparse.ArgumentParser(description="Render text at multiple font weights.")
     parser.add_argument("font", help="Font family name (e.g., 'Roboto')")
-    parser.add_argument("text", help="Text to render")
+    parser.add_argument("--text", help="Text to render")
     parser.add_argument("--font-size", type=float, default=36.0, help="Font size in points")
     parser.add_argument("-o", "--output", default="output.png", help="Output PNG file name")
     parser.add_argument("--text-color", default="#000000", help="Text color in hex format (e.g., #000000)")
